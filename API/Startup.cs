@@ -38,6 +38,12 @@ namespace API
             {
                 opt.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
+
+            services.AddCors(opt =>{
+                opt.AddPolicy("CorsPolicy", policy =>{
+                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,8 +59,11 @@ namespace API
             //since we aren't using https
             // app.UseHttpsRedirection();
 
-            //routing middle ware responsible routing to or endpoints (controllers)
+            //routing middleware responsible routing to or endpoints (controllers)
+            //it is important to nonte the order of calling these functions
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 

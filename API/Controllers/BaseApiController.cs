@@ -10,7 +10,7 @@ namespace API.Controllers
     {
         private IMediator _mediator;
 
-        //??= a null correslessing operator (if null assign right of the operator)
+        //??= a null correlessing operator (if null assign right of the operator)
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
     }
 }

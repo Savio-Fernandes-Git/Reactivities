@@ -37,7 +37,7 @@ namespace API
                 //<Program> is the class we're logging from
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occured during migration");
-            }
+            } 
             // we need to make sure we run the application (CreateHostBuilder)
             await host.RunAsync();
         }

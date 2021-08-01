@@ -33,8 +33,7 @@ namespace API
                 await context.Database.MigrateAsync();
                 await Seed.SeedData(context);
             } catch(Exception ex){
-                //ILogger is a service, ILogger takes a type
-                //<Program> is the class we're logging from
+                //ILogger is a service, ILogger takes a type <Program> is the class we're logging from
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occured during migration");
             } 

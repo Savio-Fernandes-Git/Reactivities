@@ -46,7 +46,7 @@ namespace API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
 
-            //since we aren't using https
+            //since we aren't using https we can comment the next line
             // app.UseHttpsRedirection();
 
             //routing middleware responsible routing to or endpoints (controllers)

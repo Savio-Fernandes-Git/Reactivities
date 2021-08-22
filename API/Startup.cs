@@ -40,7 +40,7 @@ namespace API
             services.AddApplicationServices(_config);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline. (middleware)
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<ExceptionMiddleware>();
@@ -56,7 +56,7 @@ namespace API
             // app.UseHttpsRedirection();
 
             //routing middleware responsible routing to or endpoints (controllers)
-            //it is important to nonte the order of calling these functions
+            //it is important to note the order of calling these functions
             app.UseRouting();
 
             app.UseCors("CorsPolicy");

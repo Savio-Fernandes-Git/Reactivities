@@ -17,7 +17,7 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Query, Result<List<Activity>>>
         {
             private readonly DataContext _context;
-            //use quickfix to initialize field from parameter and use persistence
+            //use quickfix to initialize field from parameter using persistence
             public Handler(DataContext context)
             {
                 _context = context;

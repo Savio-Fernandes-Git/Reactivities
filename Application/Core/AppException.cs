@@ -2,6 +2,7 @@ namespace Application.Core
 {
     public class AppException
     {
+        //give details default value of null. details will be the stacktrace that we return
         public AppException(int statusCode, string message, string details = null)
         {
             StatusCode = statusCode;

@@ -21,6 +21,7 @@ namespace API.Middleware
             _next = next;
         }
 
+        //anytime we makea request this will be called
         public async Task InvokeAsync(HttpContext context){
             try{
                 await _next(context);

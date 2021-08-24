@@ -1,9 +1,10 @@
 using Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {
-    public class DataContext : DbContext //derived from entity framework class DbContext
+    public class DataContext : IdentityDbContext<AppUser> //derived from entity framework class DbContext
     //not using repository pattern to handle logic, rather clean architecture and SQRS
     {//generate constructor
     //passing options -base constructor which we passing instructions to from DbContext 

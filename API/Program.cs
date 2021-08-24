@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Domain;
 
 namespace API
 {
@@ -29,9 +31,10 @@ namespace API
             
             try{
                 var context = services.GetRequiredService<DataContext>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
                 //will create database if it doesn't already exist
                 await context.Database.MigrateAsync();
-                await Seed.SeedData(context);
+                await Seed.SeedData(context, userManager);
             } catch(Exception ex){
                 //ILogger is a service, ILogger takes a type <Program> is the class we're logging from
                 var logger = services.GetRequiredService<ILogger<Program>>();

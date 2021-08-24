@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { useParams, Link, useHistory } from 'react-router-dom';
-import { Button, Segment } from 'semantic-ui-react';
+import { Button, Header, Segment } from 'semantic-ui-react';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/store';
 import { Formik, Form } from 'formik';
@@ -34,7 +34,7 @@ const ActivityForm = () => {
         title: Yup.string().required('This field is required'),
         description: Yup.string().required('This field is required'),
         category: Yup.string().required('This field is required'),
-        date: Yup.string().required('This field is required'),
+        date: Yup.string().required('Date is required').nullable(),
         venue: Yup.string().required('This field is required'),
         city: Yup.string().required('This field is required'),
     })
@@ -43,27 +43,28 @@ const ActivityForm = () => {
         if (id) loadActivity(id).then(activity => setActivity(activity!))
     }, [id, loadActivity]);
 
-    // function handleFormSubmit(){
-    //     if (activity.id.length === 0){
-    //         let newActivity = {
-    //             ...activity,
-    //             id: uuid()
-    //         };
-    //         createActivity(newActivity).then(() => history.push(`/activities/${newActivity.id}`))
-    //     } else{
-    //         updateActivity(activity).then(() => history.push(`/activities/${activity.id}`))
-    //     }
-    // }
+    function handleFormSubmit(activity : Activity){
+        if (activity.id.length === 0){
+            let newActivity = {
+                ...activity,
+                id: uuid()
+            };
+            createActivity(newActivity).then(() => history.push(`/activities/${newActivity.id}`))
+        } else{
+            updateActivity(activity).then(() => history.push(`/activities/${activity.id}`))
+        }
+    }
 
 
     if (loadingInitial) return <LoadingComponent content='loading activity ...' />
     return (
         <Segment clearing>
+            <Header content='Activity details' sub color='teal'/>
             <Formik 
             validationSchema = {validationSchema} 
-            enableReinitialize initialValues={activity} onSubmit={values => console.log(values)}
+            enableReinitialize initialValues={activity} onSubmit={values => handleFormSubmit(values)}
             >
-                {({ handleSubmit })=> (
+                {({ handleSubmit, isValid, isSubmitting, dirty })=> (
                     <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
                         <MyTextInput name="title" placeholder="Title" />
                         <MyTextArea rows={3} placeholder='Description' 
@@ -76,11 +77,15 @@ const ActivityForm = () => {
                         timeCaption='time'
                         dateFormat='MMMM d, yyyy h:mm aa'
                         />
+                        <Header content='Location details' sub color='teal'/>
                         <MyTextInput placeholder='City'
                         name='city'/>
                         <MyTextInput placeholder='Venue'
                         name='venue'/>
-                        <Button loading={loading} floated='right' positive type='submit' content='Submit'/>
+                        <Button 
+                            loading={loading} floated='right' positive type='submit' content='Submit'
+                            disabled={isSubmitting || !dirty || !isValid}
+                        />
                         <Button as={Link} to='/activities' floated='right' type='button' content='Cancel'/>
                     </Form>
                 )}

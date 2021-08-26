@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Application.Activities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -15,7 +16,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new List.Query()));
             //to get our response back from the mediator
         }
-
+        
         [HttpGet("{id}")]//get route parameter using curly brackets activities/id
         //{Id = id} object initializer syntax (setting Id to id)
         public async Task<IActionResult> GetActivity(Guid id)

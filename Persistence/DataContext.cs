@@ -16,5 +16,26 @@ namespace Persistence
         //adding property of type DbSet, takes type parameter Activity
         //we're gonna call our table activities
         public DbSet<Activity> Activities { get; set; }
+        public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
+
+        //configuring many to many (overriding OnModelCreating)
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            //telling primary key
+            builder.Entity<ActivityAttendee>(x => x.HasKey( aa => new { aa.AppUserId, aa.ActivityId }));
+
+            //configuring the entity itself
+            builder.Entity<ActivityAttendee>()
+            .HasOne( u => u.AppUser )
+            .WithMany( a => a.Activities )
+            .HasForeignKey( aa => aa.AppUserId );
+
+            builder.Entity<ActivityAttendee>()
+            .HasOne( u => u.Activity )
+            .WithMany( a => a.Attendees )
+            .HasForeignKey( aa => aa.ActivityId );
+        }
     }
 }

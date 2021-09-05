@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Application.Profiles;
 
-namespace Domain
+namespace Application.Activities
 {
-    public class Activity
+    public class ActivityDto
     {
         public Guid Id { get; set; } //Guid can be used to generate from either server or client side
         //Entity framework will recognize Id as the primary key for the RDB (relational database) 
@@ -13,12 +14,9 @@ namespace Domain
         public string Description { get; set; }
         public string Category { get; set; }
         public string City { get; set; }
-        public string Venue { get; set; }    
-        public bool IsCancelled { get; set; }    
-        //adding propeties, all of these properties are going to form columns in our database called activities 
-        //Create database using Entity framework
-        
-        //forming the relationship
-        public ICollection<ActivityAttendee> Attendees { get; set; } = new List<ActivityAttendee>();
+        public string Venue { get; set; }
+        public string HostUsername { get; set; }
+        public bool IsCancelled { get; set; }
+        public ICollection<Profile> Attendees { get; set; }
     }
 }

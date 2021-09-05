@@ -1,9 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Activities
@@ -23,19 +25,31 @@ namespace Application.Activities
                 RuleFor(x => x.Activity).SetValidator(new ActivityValidator());
             }
         }
-        
+
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
 
             }
 
             //unit is an object that mediatr provides but doesn't really have any value, tells our API the request is finished so it can move on
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
-            {   
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
+
+                var attendee = new ActivityAttendee
+                {
+                    AppUser = user,
+                    Activity = request.Activity,
+                    IsHost = true
+                };
+                request.Activity.Attendees.Add(attendee);
+
                 //we could use async but it isnt required
                 _context.Activities.Add(request.Activity);
 
@@ -43,7 +57,7 @@ namespace Application.Activities
 
                 if (!result) return Result<Unit>.Failure("Failed to create Activity");
 
-                return Result<Unit>.Success(Unit.Value); 
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

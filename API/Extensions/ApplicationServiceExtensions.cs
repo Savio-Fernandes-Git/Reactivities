@@ -1,5 +1,7 @@
 using Application.Activities;
+using Application.Interfaces;
 using AutoMapper;
+using Infrastructure.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +36,7 @@ namespace API.Extensions
             services.AddMediatR(typeof(List.Handler).Assembly);
             //tells automapper where our handlers are
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
-
+            services.AddScoped<IUserAccessor, UserAccessor>();
             return services;
         }
     }

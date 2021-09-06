@@ -11,7 +11,7 @@ import MyTextArea from '../../../app/common/form/MyTextArea';
 import { categoryOptions } from '../../../app/common/options/categoryOptions';
 import MySelectInput from '../../../app/common/form/MySelectInput';
 import MyDateInput from '../../../app/common/form/MyDateInput';
-import { Activity } from '../../../app/models/activity';
+import { Activity, ActivityFormValues } from '../../../app/models/activity';
 import {v4 as uuid} from 'uuid';
 
 const ActivityForm = () => {
@@ -20,15 +20,7 @@ const ActivityForm = () => {
     const {createActivity, updateActivity, loading, loadActivity, loadingInitial} = activityStore;
     const {id} = useParams<{id: string}>();
 
-    const [activity, setActivity] = useState<Activity>({
-        id: '',
-        title:'',
-        category:'',
-        description:'',
-        date: null,
-        city:'',
-        venue:''
-    })
+    const [activity, setActivity] = useState<ActivityFormValues>( new ActivityFormValues());
 
     const validationSchema = Yup.object({
         title: Yup.string().required('This field is required'),
@@ -40,11 +32,11 @@ const ActivityForm = () => {
     })
 
     useEffect(() => {
-        if (id) loadActivity(id).then(activity => setActivity(activity!))
+        if (id) loadActivity(id).then(activity => setActivity(new ActivityFormValues(activity)))
     }, [id, loadActivity]);
 
-    function handleFormSubmit(activity : Activity){
-        if (activity.id.length === 0){
+    function handleFormSubmit(activity : ActivityFormValues){
+        if (!activity.id){
             let newActivity = {
                 ...activity,
                 id: uuid()
@@ -54,7 +46,6 @@ const ActivityForm = () => {
             updateActivity(activity).then(() => history.push(`/activities/${activity.id}`))
         }
     }
-
 
     if (loadingInitial) return <LoadingComponent content='loading activity ...' />
     return (
@@ -83,7 +74,7 @@ const ActivityForm = () => {
                         <MyTextInput placeholder='Venue'
                         name='venue'/>
                         <Button 
-                            loading={loading} floated='right' positive type='submit' content='Submit'
+                            loading={isSubmitting} floated='right' positive type='submit' content='Submit'
                             disabled={isSubmitting || !dirty || !isValid}
                         />
                         <Button as={Link} to='/activities' floated='right' type='button' content='Cancel'/>

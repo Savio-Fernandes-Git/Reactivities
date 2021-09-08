@@ -10,5 +10,6 @@ namespace Domain
         
         //forming the relationship
         public ICollection<ActivityAttendee> Activities { get; set; }
+        public ICollection<Photo> Photos { get; set; }
     }
 }

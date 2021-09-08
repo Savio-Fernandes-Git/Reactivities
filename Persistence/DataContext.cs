@@ -17,6 +17,7 @@ namespace Persistence
         //we're gonna call our table activities
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
+        public DbSet<Photo> Photos { get; set; }
 
         //configuring many to many (overriding OnModelCreating)
         protected override void OnModelCreating(ModelBuilder builder)

@@ -15,6 +15,7 @@ import LoginForm from './../../features/users/LoginForm';
 import { useStore } from './../stores/store';
 import LoadingComponent from './LoadingComponent';
 import ModalContainer from '../common/modals/ModalContainer';
+import ProfilePage from '../../features/profiles/ProfilePage';
 
 function App() {
 const location = useLocation();
@@ -45,6 +46,7 @@ if (!commonStore.appLoaded) return <LoadingComponent content='Loading app...'/>
           <Route exact path='/activities' component={ActivityDashboard} />
           <Route path='/activities/:id' component={ActivityDetails} />
           <Route key={location.key} path={['/createActivity', '/manage/:id']} component={ActivityForm} />
+          <Route path='/profiles/:username' component={ProfilePage} />
           <Route key={location.key} path='/errors' component={TestErrors} />
           <Route key={location.key} path='/server-error' component={ServerError} />
           <Route key={location.key} path='/login' component={LoginForm} />

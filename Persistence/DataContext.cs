@@ -18,6 +18,7 @@ namespace Persistence
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
         public DbSet<Photo> Photos { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         //configuring many to many (overriding OnModelCreating)
         protected override void OnModelCreating(ModelBuilder builder)
@@ -37,6 +38,11 @@ namespace Persistence
             .HasOne( u => u.Activity )
             .WithMany( a => a.Attendees )
             .HasForeignKey( aa => aa.ActivityId );
+
+            builder.Entity<Comment>()
+            .HasOne(a => a.Activity)
+            .WithMany(c => c.Comments)
+            .OnDelete(DeleteBehavior.Cascade); //if we delete an activity, it will cacasde to delete comments for that activity
         }
     }
 }

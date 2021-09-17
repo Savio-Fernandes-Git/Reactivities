@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Extensions;
 using API.Middleware;
+using API.SignalR;
 using Application.Activities;
 using Application.Core;
 using AutoMapper;
@@ -75,6 +76,8 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                //endpoint for signalR
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }

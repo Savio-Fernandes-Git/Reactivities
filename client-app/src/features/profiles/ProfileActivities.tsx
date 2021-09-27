@@ -37,7 +37,7 @@ const ProfileActivities = () => {
                         menu={{ secondary: true, pointing: true}}
                         onTabChange= {(e,data) => handleTabChange(e,data)}
                     />
-                    <br/>
+                    <br />
                     <Card.Group itemsPerRow={4}>
                         {userActivities.map((activity: UserActivity) => (
                             <Card
@@ -46,7 +46,7 @@ const ProfileActivities = () => {
                                 key={activity.id}
                             >
                                 <Image 
-                                    src={`/assets/categoryI,ages/${activity.category}.jpg`}
+                                    src={`/assets/categoryImages/${activity.category}.jpg`}
                                     style={{minHeight: 100, objectFit: 'cover'}}
                                 />
                                 <Card.Content>

@@ -1,28 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using API.Extensions;
 using API.Middleware;
 using API.SignalR;
 using Application.Activities;
-using Application.Core;
-using AutoMapper;
 using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using Persistence;
 
 namespace API
 {
@@ -67,6 +54,9 @@ namespace API
             //it is important to note the order of calling these functions
             app.UseRouting();
 
+            app.UseDefaultFiles();//will look in wwwroot folder
+            app.UseStaticFiles();//searches for static files in wwwroot folder
+
             app.UseCors("CorsPolicy");
             
             //we need authentication to go before authorization
@@ -78,6 +68,7 @@ namespace API
                 endpoints.MapControllers();
                 //endpoint for signalR
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

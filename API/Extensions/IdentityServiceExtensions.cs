@@ -35,6 +35,7 @@ namespace API.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
+                    //adding Jwt options for SignalR
                     opt.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
@@ -45,7 +46,7 @@ namespace API.Extensions
                             {
                                 context.Token = accessToken;
                             }
-                            return Task.CompletedTask;
+                            return Task.CompletedTask; //return to function onMessageReceived
                         }
                     };
             });

@@ -16,8 +16,8 @@ namespace Application.Comments
     {
         public class Command : IRequest<Result<CommentDto>>
         {
-            public string Body { get; set; }
-            public Guid ActivityId { get; set; }
+            public string Body { get; set; } //body of the comment
+            public Guid ActivityId { get; set; } //Guid of the activity ID where the comment is written
         }
         public class CommandValidator : AbstractValidator<Command>
         {
@@ -27,11 +27,12 @@ namespace Application.Comments
             }
         }
 
+        //we generally dont use a return type in 'command' but we want to here so we get userData back and we want the server to generate the Id for the comments
         public class Handler : IRequestHandler<Command, Result<CommentDto>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
-            private readonly IUserAccessor _userAccessor;
+            private readonly IUserAccessor _userAccessor; //to get currently logged in user
             public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
                 _userAccessor = userAccessor;

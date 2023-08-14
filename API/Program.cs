@@ -1,54 +1,76 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using API.Extensions;
+using API.Middleware;
+using API.SignalR;
 
-namespace API
+var builder = WebApplication.CreateBuilder(args);
+
+// add services to the container
+builder.Services.AddControllers(opt =>
 {
-    public class Program
-    {
-        //make main async to allow await function
-        public static async Task Main(string[] args)
-        {
-            var host = CreateHostBuilder(args).Build();
-            //using dependency injection
-            //keyword using here will dispose var scope
-            //scope is where we will be storing our services so it needs to be disposed after use
-            //there are things we need to dispose after we finish using it
-            using var scope = host.Services.CreateScope();
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+});
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
-            //service fetcher
-            var services = scope.ServiceProvider;
-            
-            try{
-                var context = services.GetRequiredService<DataContext>();
-                var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                //will create database if it doesn't already exist
-                await context.Database.MigrateAsync();
-                await Seed.SeedData(context, userManager);
-            } catch(Exception ex){
-                //ILogger is a service, ILogger takes a type <Program> is the class we're logging from
-                var logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occured during migration");
-            } 
-            // we need to make sure we run the application (CreateHostBuilder)
-            await host.RunAsync();
-        }
+// configure the HTTP request pipeline (middleware)
+var app = builder.Build();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+app.UseMiddleware<ExceptionMiddleware>();
+
+if (builder.Environment.IsDevelopment())
+{
+    //app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
 }
+
+//since we aren't using https we can comment the next line
+// app.UseHttpsRedirection();
+
+//routing middleware responsible routing to or endpoints (controllers)
+//it is important to note the order of calling these functions
+// we dont need UseRouting for .net 7
+// app.UseRouting();
+
+app.UseCors("CorsPolicy");
+
+//we need authentication to go before authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+//endpoint for signalR
+app.MapHub<ChatHub>("/chat");
+
+//using dependency injection
+//keyword using here will dispose var scope
+//scope is where we will be storing our services so it needs to be disposed after use
+//there are things we need to dispose after we finish using it
+using var scope = app.Services.CreateScope();
+
+//service fetcher
+var services = scope.ServiceProvider;
+
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    //will create database if it doesn't already exist
+    await context.Database.MigrateAsync();
+    await Seed.SeedData(context, userManager);
+}
+catch (Exception ex)
+{
+    //ILogger is a service, ILogger takes a type <Program> is the class we're logging from
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occured during migration");
+}
+// we need to make sure we run the application (CreateHostBuilder)
+app.Run();

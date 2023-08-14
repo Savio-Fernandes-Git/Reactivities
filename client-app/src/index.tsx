@@ -1,29 +1,28 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import 'react-calendar/dist/Calendar.css';
 import 'react-toastify/dist/ReactToastify.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './app/layout/styles.css';
 import 'semantic-ui-css/semantic.min.css';
-import App from './app/layout/App';
 import reportWebVitals from './reportWebVitals';
 import { store, StoreContext } from './app/stores/store';
-import { Router } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
+import {  RouterProvider } from 'react-router-dom';
 import ScrollToTop from './app/layout/ScrollToTop';
+import { router } from './app/router/Routes';
 
-export const history = createBrowserHistory();
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+  )
+
+root.render(
   <StoreContext.Provider value={store}>
-    {/* <React.StrictMode> */}
-      <Router history={history}>
-        <ScrollToTop />
-        <App />
-      </Router>
+    {/* <React.StrictMode> because of semantic UI */}
+      <RouterProvider router={router} />
+        {/* <ScrollToTop /> */}
     {/* </React.StrictMode> */}
   </StoreContext.Provider>,
-  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -30,7 +30,7 @@ const ActivityFilters = () => {
             </Menu>
             <Header />
             <Calendar 
-                onChange={(date: Date) => setPredicate('startDate', date as Date)}
+                onChange={(date: any) => setPredicate('startDate', date as Date)}
                 value= {predicate.get('startDate') || new Date()}
             />
         </>

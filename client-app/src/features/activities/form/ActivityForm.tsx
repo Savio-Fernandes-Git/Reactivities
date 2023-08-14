@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { useParams, Link, useHistory } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button, Header, Segment } from 'semantic-ui-react';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/store';
@@ -15,7 +15,7 @@ import { ActivityFormValues } from '../../../app/models/activity';
 import {v4 as uuid} from 'uuid';
 
 const ActivityForm = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const {activityStore} = useStore();
     const {createActivity, updateActivity, loadActivity, loadingInitial} = activityStore;
     const {id} = useParams<{id: string}>();
@@ -41,9 +41,9 @@ const ActivityForm = () => {
                 ...activity,
                 id: uuid()
             };
-            createActivity(newActivity).then(() => history.push(`/activities/${newActivity.id}`))
+            createActivity(newActivity).then(() => navigate(`/activities/${newActivity.id}`))
         } else{
-            updateActivity(activity).then(() => history.push(`/activities/${activity.id}`))
+            updateActivity(activity).then(() => navigate(`/activities/${activity.id}`))
         }
     }
 
